@@ -8,11 +8,12 @@ class YellowSpider(scrapy.Spider):
     start_urls = ['http://yellowpages.com/']
 
     def start_requests(self):
-        urls = [
-            'https://www.yellowpages.com/search?search_terms=Casinos&geo_location_terms=Las+Vegas%2C+NV'
-        ]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse_list)
+        search_terms = getattr(self, 'search_terms')
+        geo_location_terms = getattr(self, 'geo_location_terms')
+        
+        start_url = 'https://www.yellowpages.com/search?search_terms=' + search_terms + '&geo_location_terms=' + geo_location_terms
+
+        yield scrapy.Request(start_url, callback=self.parse_list)
 
     def parse_list(self, response):
         #print('parse_list')
