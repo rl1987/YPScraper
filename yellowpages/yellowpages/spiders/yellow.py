@@ -29,4 +29,18 @@ class YellowSpider(scrapy.Spider):
 
     def parse_company_page(self, response):
         #print('parse_company_page')
-        pass
+
+        email = response.xpath('//a[@class="email-business"]/@href').get()
+        if email is not None:
+            email = email.replace('mailto:','')
+
+        yield {
+            'Business name' : response.xpath('//div[@class="sales-info"]/h1/text()').get(),
+            'Address': response.xpath('//div[@class="contact"]/h2[@class="address"]/text()').get(),
+            'Phone': response.xpath('//div[@class="contact"]/p[@class="phone"]/text()').get(),
+            'Email': email,
+            'Website URL' : response.xpath('//a[@class="secondary-btn website-link"]/@href').get(),
+            'Yellowpages URL' : response.url,
+            'Latitude' : response.xpath('//div[@id="bpp-static-map"]/@data-lat').get(),
+            'Longitude' : response.xpath('//div[@id="bpp-static-map"]/@data-lng').get(),
+        }
